@@ -1,0 +1,89 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    /* Occupa tutta l'altezza data dal genitore */
+}
+
+.sidebar-top {
+    flex-grow: 1;
+    /* Il contenuto superiore occupa tutto lo spazio disponibile */
+    padding: 0 15px;
+}
+
+.sidebar-section-title {
+    font-size: 0.8em;
+    color: #a0a0a0;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.sidebar-item i {
+    /* Stile per le icone, se le usi */
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.sidebar-item:hover {
+    background-color: #3a3a3a;
+}
+
+.sidebar-item.selected {
+    background-color: #444444;
+    /* Sfondo per l'elemento selezionato */
+    font-weight: bold;
+}
+
+.profile-section {
+    flex-shrink: 0;
+    /* La sezione profilo non si restringe */
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-top: 1px solid #1a1a1a;
+    gap: 10px;
+    /* Spazio tra immagine, username e pulsante */
+}
+
+.profile-img {
+    width: 30px;
+    /* Dimensione dell'immagine profilo */
+    height: 30px;
+    border-radius: 50%;
+    /* Rende l'immagine circolare */
+    object-fit: cover;
+    /* Assicura che l'immagine copra l'area */
+    background-color: #555;
+    /* Colore di fallback o se l'immagine è trasparente */
+}
+
+.username {
+    flex-grow: 1;
+    /* Lo username occupa lo spazio rimanente */
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #e0e0e0;
+    color: #444444;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #555555;
+}

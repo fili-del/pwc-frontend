@@ -1,0 +1,127 @@
+:host {
+    display: flex;
+    /* Assicurati che l'host del componente sia un flex container */
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 12px;
+    /* Spazia gli elementi agli estremi */
+    overflow: hidden;
+    /* evita overflow orizzontale dell'header */
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    /* Non si restringe */
+    /* Spazio tra logo e testo home */
+}
+
+.logo {
+    background-color: #607d8b;
+    /* Colore simile al logo "IN" */
+    padding: 5px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.home-text {
+    font-weight: bold;
+}
+
+.header-center {
+    flex-grow: 1;
+    /* Occupa lo spazio disponibile */
+    display: flex;
+    /* Usa flexbox per centrare l'input */
+    justify-content: center;
+    /* Centra l'input orizzontalmente */
+    text-align: center;
+    /* Centra la searchbar */
+    min-width: 0;
+    /* consenti di restringere il contenuto centrale */
+}
+
+.search-input {
+    width: 100%;
+    /* Larghezza fissa per la searchbar */
+    max-width: 400px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #3c3c3c;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.search-input::placeholder {
+    color: #a0a0a0;
+}
+
+.trello-button {
+    background-color: #0079bf;
+    /* Blu Trello */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex-shrink: 0;
+    /* mantiene la dimensione ma non oltre il contenitore */
+    white-space: nowrap;
+    /* Evita che il testo vada a capo */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trello-button:hover {
+    background-color: #00609a;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.header-icons-row {
+    display: flex;
+    gap: 10px;
+}
+
+.header-icon-button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #f5f5f5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Riduci spazi e dimensioni su viewports stretti */
+@media (max-width: 520px) {
+    :host {
+        gap: 10px;
+        padding: 0 8px;
+    }
+
+    .search-input {
+        max-width: 260px;
+    }
+
+    .trello-button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

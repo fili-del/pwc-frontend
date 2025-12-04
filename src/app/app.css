@@ -1,0 +1,81 @@
+/* Stili globali per un reset minimale e per usare l'altezza completa */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #363636;
+    box-sizing: border-box;
+    /* Include padding e border nel width/height */
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    /* Impila gli elementi verticalmente */
+    height: 100vh;
+    /* Occupiamo il 100% dell'altezza della viewport */
+    overflow: hidden;
+    /* Previene lo scroll sul contenitore principale */
+}
+
+.app-header {
+    flex-shrink: 0;
+    /* L'header non si restringe */
+    height: 60px;
+    /* Altezza fissa per l'header */
+    background-color: #2c2c2c;
+    /* Sfondo scuro dell'header */
+    color: #e0e0e0;
+    display: flex;
+    /* Usiamo flexbox per il contenuto interno dell'header */
+    align-items: center;
+    /* Allinea verticalmente gli elementi */
+}
+
+.main-body {
+    display: flex;
+    flex-grow: 1;
+    min-height: 0;
+    /* Fix per evitare overflow in contenitori flex */
+    overflow: hidden;
+    /* L'area che contiene Sidebar e Main Content occupa lo spazio rimanente */
+}
+
+.app-sidebar {
+    flex-shrink: 0;
+    /* La sidebar non si restringe */
+    width: 250px;
+    /* Larghezza fissa della sidebar */
+    background-color: #2c2c2c;
+    /* Sfondo scuro della sidebar */
+    color: #e0e0e0;
+    border-right: 1px solid #1a1a1a;
+    /* Bordo sottile per separare */
+    display: flex;
+    flex-direction: column;
+    /* Permette di posizionare elementi in alto e in basso */
+    padding-top: 15px;
+    /* Spazio dall'alto per le voci del menu */
+}
+
+.app-main-content {
+    flex-grow: 1;
+    /* Il main content occupa tutto lo spazio orizzontale rimanente */
+    background-color: #363636;
+    /* Sfondo del main content come nell'immagine */
+    padding: 20px;
+    /* Spazio interno per i contenuti */
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* impedisce scroll orizzontale */
+    /* Permette lo scroll se i contenuti sono troppi */
+    box-sizing: border-box;
+    /* Assicura che il padding non causi overflow */
+}

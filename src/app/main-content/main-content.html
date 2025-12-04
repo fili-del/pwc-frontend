@@ -1,0 +1,250 @@
+<ng-container *ngIf="!activeProject; else projectBoard">
+    <div class="main-content-grid">
+        <div class="project-card" *ngFor="let project of projects" (click)="openProject(project)">
+            <div class="card-image-placeholder" [style.backgroundColor]="project.color"></div>
+            <div class="card-title">{{ project.title }}</div>
+        </div>
+
+        <div class="project-card create-project-card" (click)="openCreateModal()">
+            <div class="create-project-text">crea un nuovo progetto</div>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #projectBoard>
+    <div class="project-board" *ngIf="activeProject as project" [ngStyle]="{'--project-color': project.color}">
+        <div class="board-top-bar">
+            <div class="board-heading">
+                <button class="back-button" (click)="closeProject()">‹</button>
+                <div class="project-color" [style.backgroundColor]="project.color"></div>
+                <div class="board-title">{{ project.title }}</div>
+            </div>
+            <div class="board-actions">
+                <button class="icon-button" aria-label="Profilo">
+                    <i class="fas fa-user"></i>
+                </button>
+                <button class="icon-button" aria-label="Filtri board" (click)="openFilterModal()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="icon-button" aria-label="Condividi board" (click)="openShareModal($event)">
+                    <i class="fas fa-share-nodes"></i>
+                </button>
+                <button class="icon-button" aria-label="Esci dalla board" (click)="openExitConfirm()">
+                    <i class="fas fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="board-columns">
+            <div class="board-column" *ngFor="let column of boardColumns">
+                <div class="column-header">
+                    <div class="column-title" *ngIf="column.title">{{ column.title }}</div>
+                    <button class="column-menu" *ngIf="column.title">···</button>
+                </div>
+
+                <div class="column-body" [class.highlight]="column.highlight">
+                    <div class="column-description" *ngIf="column.description">{{ column.description }}</div>
+
+                    <!-- Task cards -->
+                    <div class="task-card" *ngFor="let task of column.tasks" (click)="openTaskDetails(task)">
+                        <div class="task-card-labels"><span class="task-card-label" *ngFor="let label of task.labels"
+                                [style.backgroundColor]="label"></span></div>
+                        <div class="task-card-title">{{ task.title }}</div>
+                    </div>
+
+                    <div class="column-action" *ngFor="let action of column.actions">
+                        <button class="action-button" [class.primary]="column.highlight"
+                            (click)="handleColumnAction(column, action)">
+                            {{ action }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Modal di creazione progetto -->
+<div class="modal-backdrop" *ngIf="showCreateModal" (click)="closeCreateModal()"></div>
+<div class="create-modal" *ngIf="showCreateModal" role="dialog" aria-modal="true">
+    <div class="modal-section-title">Titolo Del progetto</div>
+    <input class="modal-input" type="text" placeholder="Inserisci il titolo del progetto (obbligatorio)"
+        [(ngModel)]="newProjectTitle" (keydown.enter)="createProject()">
+
+    <div class="modal-section-title">Sfondo</div>
+    <div class="color-grid">
+        <button class="color-swatch" *ngFor="let c of availableColors" [style.backgroundColor]="c"
+            [class.selected]="c === selectedColor" (click)="$event.stopPropagation(); selectedColor = c"></button>
+    </div>
+
+    <button class="start-button" (click)="createProject()" [disabled]="!newProjectTitle.trim()">Inizia</button>
+    <button class="close-x" aria-label="Chiudi" (click)="closeCreateModal()">×</button>
+
+</div>
+
+<!-- Modal di condivisione progetto -->
+<div class="modal-backdrop" *ngIf="showShareModal" (click)="closeShareModal()"></div>
+<div class="share-modal" *ngIf="showShareModal" role="dialog" aria-modal="true">
+    <button class="close-x" aria-label="Chiudi" (click)="closeShareModal()">×</button>
+
+    <div class="modal-section-title">Condividi Progetto</div>
+    <input class="modal-input" type="text" placeholder="Username" [(ngModel)]="shareUsername"
+        (keydown.enter)="inviteCollaborator()">
+
+    <div class="share-link-row">
+        <i class="fas fa-link"></i>
+        <span>Condividi questo progetto con un link</span>
+    </div>
+
+    <div class="share-controls">
+        <select class="role-dropdown" [(ngModel)]="selectedShareRole">
+            <option *ngFor="let role of shareRoles" [value]="role">{{ role }}</option>
+        </select>
+        <button class="invite-button" (click)="inviteCollaborator()" [disabled]="!shareUsername.trim()">Invita</button>
+    </div>
+
+    <div class="modal-section-title">Collaboratori attuali</div>
+    <div class="collaborators-list">
+        <div class="collaborator-card" *ngFor="let collaborator of collaborators">
+            <div class="collaborator-avatar">
+                <img src="/profile.png" alt="{{ collaborator.name }}">
+            </div>
+            <div class="collaborator-name">{{ collaborator.name }}</div>
+            <div class="collaborator-role">{{ collaborator.role }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Popup Task -->
+<div class="modal-backdrop" *ngIf="showTaskModal" (click)="closeTaskModal()"></div>
+<div class="task-modal" *ngIf="showTaskModal" (click)="$event.stopPropagation()">
+    <div class="task-modal-header">
+        <div class="task-title">Crea Task</div>
+        <button class="task-close" aria-label="Chiudi" (click)="closeTaskModal()">×</button>
+    </div>
+
+    <div class="task-modal-body">
+        <div class="task-left">
+            <div class="task-section-title">
+                <span class="task-section-icon">🏷️</span>
+                <span>Titolo</span>
+            </div>
+            <input class="task-text-input" type="text" placeholder="Titolo della task" [(ngModel)]="newTaskTitle">
+
+            <div class="task-section-title">
+                <span class="task-section-icon">☰</span>
+                <span>Descrizione</span>
+            </div>
+            <textarea class="task-description-input" placeholder="Inserisci una descrizione per la task"
+                [(ngModel)]="newTaskDescription"></textarea>
+
+            <div class="task-section-title">
+                <span class="task-section-icon">📂</span>
+                <span>Fase</span>
+            </div>
+            <select class="task-select-input" [(ngModel)]="newTaskPhase">
+                <option *ngFor="let col of boardColumns | slice:0:3" [ngValue]="col.title">
+                    {{ col.title || 'Senza titolo' }}
+                </option>
+            </select>
+        </div>
+
+        <div class="task-right">
+            <div class="task-section-title">
+                <span class="task-section-icon">👤</span>
+                <span>Assegnata a</span>
+            </div>
+            <input class="task-text-input" type="text" placeholder="Nome membro" [(ngModel)]="newTaskAssignee">
+
+            <div class="task-section-title">
+                <span class="task-section-icon">📅</span>
+                <span>Data di scadenza</span>
+            </div>
+            <input class="task-text-input" type="date" [(ngModel)]="newTaskDueDate">
+
+            <div class="task-section-title">
+                <span class="task-section-icon">🎨</span>
+                <span>Etichette</span>
+            </div>
+            <div class="task-labels-row">
+                <button class="task-label-swatch" *ngFor="let color of taskAvailableLabels"
+                    [style.backgroundColor]="color" [class.selected]="newTaskLabels.includes(color)" type="button"
+                    (click)="toggleTaskLabel(color)"></button>
+            </div>
+
+            <button class="task-save-button" type="button" (click)="createTask()" [disabled]="!newTaskTitle.trim()">
+                Crea task
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Popup conferma uscita -->
+<div class="modal-backdrop" *ngIf="showExitConfirmModal" (click)="cancelExit()"></div>
+<div class="exit-confirm-modal" *ngIf="showExitConfirmModal" (click)="$event.stopPropagation()">
+    <div class="exit-confirm-header">
+        Sei sicuro di voler abbandonare / eliminare?
+    </div>
+    <div class="exit-confirm-divider"></div>
+    <div class="exit-confirm-buttons">
+        <button class="exit-btn exit-btn-yes" (click)="confirmExit()">Si</button>
+        <button class="exit-btn exit-btn-no" (click)="cancelExit()">No</button>
+    </div>
+</div>
+
+<!-- Popup Filtri -->
+<div class="modal-backdrop" *ngIf="showFilterModal" (click)="closeFilterModal()"></div>
+<div class="filters-modal" *ngIf="showFilterModal" (click)="$event.stopPropagation()">
+    <div class="filters-header">
+        <span class="filters-title">Filtri</span>
+        <button class="filters-close" aria-label="Chiudi" (click)="closeFilterModal()">×</button>
+    </div>
+
+    <div class="filters-content">
+        <div class="filters-section">
+            <div class="filters-section-title">Membri</div>
+            <label class="filters-row">
+                <span class="filters-checkbox"></span>
+                <span>Nessun membro</span>
+            </label>
+            <label class="filters-row">
+                <span class="filters-checkbox"></span>
+                <span>Assegnate a me</span>
+            </label>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-section-title">Data di scadenza</div>
+            <div class="filters-row-group">
+                <label class="filters-row">
+                    <span class="filters-checkbox"></span>
+                    <span>Nessuna scadenza</span>
+                </label>
+                <label class="filters-row">
+                    <span class="filters-checkbox"></span>
+                    <span>In scadenza domani</span>
+                </label>
+            </div>
+            <div class="filters-row-group">
+                <label class="filters-row">
+                    <span class="filters-checkbox"></span>
+                    <span>Scaduto</span>
+                </label>
+                <label class="filters-row">
+                    <span class="filters-checkbox"></span>
+                    <span>In scadenza nel prossimo mese</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-section-title">Etichette</div>
+            <div class="filters-label-row" *ngFor="let color of ['#e53935', '#1e88e5', '#fdd835', '#1b5e20']">
+                <span class="filters-checkbox"></span>
+                <div class="filters-label-bar" [style.backgroundColor]="color"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-popup *ngIf="showTaskDetailsPopup" [task]="selectedTask" (close)="closeTaskDetails()"></app-popup>
