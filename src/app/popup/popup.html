@@ -1,7 +1,41 @@
-<div class="popup-overlay">
-  <div class="popup-content">
-    <button class="close-btn" (click)="closePopup()">X</button>
-    <h2>{{ task?.title }}</h2>
-    <p>{{ task?.details }}</p>
+<div class="popup-overlay" (click)="closePopup()">
+  <div class="popup-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closePopup()">×</button>
+    
+    <div class="task-popup-header">
+      <h2 class="task-popup-title">{{ task?.title }}</h2>
+      <p class="task-popup-phase">in fase: <strong>{{ task?.phase }}</strong></p>
+    </div>
+
+    <div class="task-popup-body">
+      <div class="task-popup-section">
+        <h3 class="task-popup-section-title">Descrizione</h3>
+        <p class="task-popup-description">{{ task?.description || 'Nessuna descrizione.' }}</p>
+      </div>
+
+      <div class="task-popup-details">
+        <div class="task-popup-detail-item" *ngIf="task?.assignee">
+          <h4 class="task-popup-detail-title">Assegnata a</h4>
+          <p class="task-popup-detail-value">{{ task.assignee }}</p>
+        </div>
+
+        <div class="task-popup-detail-item" *ngIf="task?.dueDate">
+          <h4 class="task-popup-detail-title">Data di scadenza</h4>
+          <p class="task-popup-detail-value">{{ task.dueDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div class="task-popup-detail-item" *ngIf="task?.labels?.length > 0">
+          <h4 class="task-popup-detail-title">Etichette</h4>
+          <div class="task-popup-labels">
+            <span class="task-popup-label" *ngFor="let label of task.labels" [style.backgroundColor]="label"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="task-popup-footer">
+      <button class="delete-task-btn" (click)="deleteTask()">Elimina Task</button>
+    </div>
+
   </div>
 </div>

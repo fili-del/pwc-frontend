@@ -11,8 +11,13 @@ import { CommonModule } from '@angular/common';
 export class PopupComponent {
   @Input() task: any;
   @Output() close = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<any>();
 
   closePopup() {
     this.close.emit();
+  }
+
+  deleteTask() {
+    this.delete.emit(this.task);
   }
 }

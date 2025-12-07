@@ -143,8 +143,8 @@
                 <span>Fase</span>
             </div>
             <select class="task-select-input" [(ngModel)]="newTaskPhase">
-                <option *ngFor="let col of boardColumns | slice:0:3" [ngValue]="col.title">
-                    {{ col.title || 'Senza titolo' }}
+                <option *ngFor="let col of phaseColumns" [ngValue]="col.title">
+                    {{ col.title }}
                 </option>
             </select>
         </div>
@@ -247,4 +247,4 @@
     </div>
 </div>
 
-<app-popup *ngIf="showTaskDetailsPopup" [task]="selectedTask" (close)="closeTaskDetails()"></app-popup>
+<app-popup *ngIf="showTaskDetailsPopup" [task]="selectedTask" (close)="closeTaskDetails()" (delete)="deleteTask($event)"></app-popup>

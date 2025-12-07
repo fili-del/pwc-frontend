@@ -36,77 +36,51 @@ export class MainContent implements OnDestroy {
     '#34d058', '#8f3fff', '#d628d6', '#20c5dd', '#005b3a'
   ];
 
-  activeProject: { title: string; color: string } | null = null;
-  boardColumns: { title: string; description: string; actions: string[]; highlight: boolean; tasks: Task[] }[] = [
-    {
-      title: 'Primo',
-      description: 'Prova',
-      actions: ['Aggiungi una nuova scheda', 'Aggiungi task'],
-      highlight: false,
-      tasks: [],
-    },
-    {
-      title: 'Secondo',
-      description: '',
-      actions: ['Aggiungi una nuova scheda', 'Aggiungi task'],
-      highlight: false,
-      tasks: [],
-    },
-    {
-      title: 'Terzo',
-      description: 'Inserisci il testo',
-      actions: ['Aggiungi task'],
-      highlight: true,
-      tasks: [],
-    },
-    {
-      title: '',
-      description: '',
-      actions: ['Aggiungi una nuova fase', 'Aggiungi task'],
-      highlight: false,
-      tasks: [],
-    },
-  ];
-
+  // Properties for sharing
   showShareModal = false;
   shareUsername = '';
-  shareRoles = ['Amministratore', 'Membro', 'Osservatore'];
+  shareRoles: string[] = ['Full access', 'Can edit', 'Can view'];
   selectedShareRole = this.shareRoles[1];
-  shareLinkEnabled = true;
-  collaborators = [
-    { name: 'Anna Rossi', role: 'Amministratore' },
-    { name: 'Luca Bianchi', role: 'Membro' },
-    { name: 'Marco Verdi', role: 'Membro' },
-    { name: 'Sara Neri', role: 'Osservatore' },
+  collaborators: { name: string, role: string }[] = [
+      { name: 'John Doe', role: 'Full access' },
+      { name: 'Jane Smith', role: 'Can edit' }
   ];
 
-  // Stato popup Task
+  // Properties for task management
   showTaskModal = false;
-  // Stato popup conferma uscita
-  showExitConfirmModal = false;
-  // Stato popup filtri
-  showFilterModal = false;
-  
-  selectedTask: Task | null = null;
-  showTaskDetailsPopup = false;
-
-  private subscriptions = new Subscription();
-
-  // Nuova task (popup Task)
   newTaskTitle = '';
   newTaskDescription = '';
   newTaskPhase = '';
   newTaskLabels: string[] = [];
   newTaskAssignee = '';
   newTaskDueDate = '';
-  taskAvailableLabels: string[] = ['#e53935', '#1e88e5', '#fdd835', '#1b5e20'];
-  private nextTaskId = 1;
-  tasks: Task[] = [];
+  nextTaskId = 1;
+  taskAvailableLabels: string[] = [
+    '#d4322d', '#ece51b', '#34d058', '#2f6de1', '#8f3fff',
+  ];
+  showTaskDetailsPopup = false;
+  selectedTask: Task | null = null;
+
+
+  // Properties for modals
+  showExitConfirmModal = false;
+  showFilterModal = false;
+
+  private subscriptions = new Subscription();
+
+  activeProject: { title: string; color: string } | null = null;
+  boardColumns: { title:string; description: string; actions: string[]; highlight: boolean; tasks: Task[] }[] = [];
+
+  private phaseNames: string[] = [
+    'Primo', 'Secondo', 'Terzo', 'Quarto', 'Quinto',
+    'Sesto', 'Settimo', 'Ottavo', 'Nono', 'Decimo'
+  ];
 
   constructor(private uiEvents: UiEventsService) {
+    this.initializeBoard();
+
     this.subscriptions.add(
       this.uiEvents.openShare$.subscribe(() => {
-        // Apri popup condivisione solo se c'è un progetto aperto
         if (this.activeProject) {
           this.openShareModal();
         }
@@ -115,12 +89,44 @@ export class MainContent implements OnDestroy {
 
     this.subscriptions.add(
       this.uiEvents.exitBoard$.subscribe(() => {
-        // Mostra conferma uscita se c'è un progetto aperto
         if (this.activeProject) {
           this.openExitConfirm();
         }
       }),
     );
+  }
+
+  private initializeBoard(): void {
+    this.boardColumns = [
+      {
+        title: this.phaseNames[0],
+        description: 'Prova',
+        actions: ['Aggiungi una nuova scheda', 'Aggiungi task'],
+        highlight: false,
+        tasks: [],
+      },
+      {
+        title: this.phaseNames[1],
+        description: '',
+        actions: ['Aggiungi una nuova scheda', 'Aggiungi task'],
+        highlight: false,
+        tasks: [],
+      },
+      {
+        title: this.phaseNames[2],
+        description: 'Inserisci il testo',
+        actions: ['Aggiungi task'],
+        highlight: true,
+        tasks: [],
+      },
+      {
+        title: '',
+        description: '',
+        actions: ['Aggiungi una nuova fase', 'Aggiungi task'],
+        highlight: false,
+        tasks: [],
+      },
+    ];
   }
 
   openCreateModal(): void {
@@ -179,11 +185,15 @@ export class MainContent implements OnDestroy {
   }
 
   // ===== Gestione popup Task =====
+  get phaseColumns(): { title: string }[] {
+    return this.boardColumns.filter(col => col.title);
+  }
+
   openTaskModal(columnTitle?: string): void {
     this.showTaskModal = true;
     this.newTaskTitle = '';
     this.newTaskDescription = '';
-    this.newTaskPhase = columnTitle ?? this.boardColumns[0]?.title ?? '';
+    this.newTaskPhase = columnTitle ?? this.phaseColumns[0]?.title ?? '';
     this.newTaskLabels = [];
     this.newTaskAssignee = '';
     this.newTaskDueDate = '';
@@ -193,16 +203,36 @@ export class MainContent implements OnDestroy {
     this.showTaskModal = false;
   }
 
-  handleColumnAction(column: { title: string }, action: string): void {
+  handleColumnAction(
+    column: { title: string },
+    action: string,
+  ): void {
     if (action === 'Aggiungi task') {
       this.openTaskModal(column.title);
+    } else if (action === 'Aggiungi una nuova fase') {
+      this.addPhase();
     }
-    // In futuro qui potrai gestire altre azioni delle colonne
+  }
+
+  addPhase(): void {
+    const phaseIndex = this.boardColumns.length - 1;
+    const newTitle = this.phaseNames[phaseIndex] || `Fase ${phaseIndex + 1}`;
+
+    const newPhase = {
+      title: newTitle,
+      description: '',
+      actions: ['Aggiungi una nuova scheda', 'Aggiungi task'],
+      highlight: false,
+      tasks: [],
+    };
+
+    // Inserisce la nuova fase prima dell'ultima colonna
+    this.boardColumns.splice(phaseIndex, 0, newPhase);
   }
 
   toggleTaskLabel(color: string): void {
     if (this.newTaskLabels.includes(color)) {
-      this.newTaskLabels = this.newTaskLabels.filter((c) => c !== color);
+      this.newTaskLabels = this.newTaskLabels.filter((c: string) => c !== color);
     } else {
       this.newTaskLabels = [...this.newTaskLabels, color];
     }
@@ -264,6 +294,22 @@ export class MainContent implements OnDestroy {
   closeTaskDetails(): void {
     this.showTaskDetailsPopup = false;
     this.selectedTask = null;
+  }
+
+  deleteTask(taskToDelete: Task): void {
+    if (!taskToDelete) {
+      return;
+    }
+
+    const columnIndex = this.boardColumns.findIndex(c => c.title === taskToDelete.phase);
+    if (columnIndex > -1) {
+      const taskIndex = this.boardColumns[columnIndex].tasks.findIndex(t => t.id === taskToDelete.id);
+      if (taskIndex > -1) {
+        this.boardColumns[columnIndex].tasks.splice(taskIndex, 1);
+      }
+    }
+
+    this.closeTaskDetails();
   }
 
   ngOnDestroy(): void {
