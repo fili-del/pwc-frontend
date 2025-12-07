@@ -6,14 +6,14 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes), // Router principale
-    
+
     // ⬇️ Abilita il client HTTP e abilita la ricerca degli Interceptor dal DI
     provideHttpClient(
-      withInterceptorsFromDi() 
+      withInterceptorsFromDi()
     )
 
     // Nota: L'Interceptor HTTP_INTERCEPTORS viene fornito tramite app.module.ts
     // Se il tuo progetto fosse completamente Standalone, lo registreresti qui.
-    
+
   ]
 };
