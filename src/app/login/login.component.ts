@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../service/auth.service';
@@ -19,6 +21,11 @@ interface TokenResponse {
 
 @Component({
     selector: 'app-login',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule
+    ],
     // Risolve NG2008: Template Inline
     template: `
     <div class="login-container">

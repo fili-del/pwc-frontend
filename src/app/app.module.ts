@@ -16,7 +16,7 @@ import { LoginComponent } from './login/login.component';
     imports: [
         BrowserModule,
         HttpClientModule, // Modulo per le chiamate HTTP
-        FormsModule, 
+        FormsModule,
         LoginComponent
              // ⬅️ RISOLVE DEFINITIVAMENTE NG8002
         // ...
