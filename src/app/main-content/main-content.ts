@@ -20,7 +20,7 @@ type Task = {
   standalone: true,
   imports: [CommonModule, FormsModule, PopupComponent],
   templateUrl: './main-content.html',
-  styleUrl: './main-content.css',
+  styleUrls: ['./main-content.css'],
 })
 export class MainContent implements OnDestroy {
   title = 'PROGETTI';
