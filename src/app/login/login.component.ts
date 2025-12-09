@@ -30,8 +30,8 @@ interface TokenResponse {
         RouterLink
     ],
     // Risolve NG2008: Template Inline
-    templateUrl: './login.html',
-    styleUrls: ['./login.css']
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
     email: string = '';

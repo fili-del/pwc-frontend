@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterService, RegisterRequest } from '../service/register.service';
+import { RouterLink } from '@angular/router';
 // Assumiamo che RegisterRequest sia definita e importata da RegisterService
 
 // ...
@@ -36,6 +37,9 @@ export class RegisterComponent {
         private router: Router
     ) { }
 
+    goToLogin() {
+    this.router.navigate(['/login']); // Naviga al percorso definito
+  }
     submitRegistration(): void {
         this.error = null;
         this.message = null;
