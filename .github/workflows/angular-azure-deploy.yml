@@ -2,62 +2,28 @@ name: Build and Deploy Angular App to Azure Web App - WEBDEV-D2-MOD18-GROUP4
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
 
 jobs:
   build:
+    name: Build Angular App
     runs-on: ubuntu-latest
-    permissions:
-      contents: read # Required for actions/checkout
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Set up Node.js
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a stable, recent Node.js version
-      
-      - name: Install dependencies and build Angular app
-        # Replace 'my-angular-app' with the actual directory name if your Angular project is in a subdirectory
-        working-directory: my-angular-app 
-        run: |
-          npm install
-          # 'ng build' creates the production-ready static files in the 'dist/' directory
-          npm run build -- --configuration production
-      
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: angular-static-files
-          # The path to the build output. Default is 'dist/<project-name>'. Adjust if necessary.
-          path: my-angular-app/dist/my-angular-app 
-          retention-days: 1
+          node-version: '22'
+          cache: 'npm'
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      contents: read
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: angular-static-files
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
       
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'WEBDEV-D2-MOD18-GROUP4'
-          slot-name: 'Production'
-          # Deploy the downloaded static files
-          package: './' 
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_34E6C7F223C54B898EF0C1475E95E1FE }}
