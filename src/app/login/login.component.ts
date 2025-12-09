@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../service/auth.service';
+import { RouterLink } from '@angular/router';
 // Ho spostato TokenResponse e LoginRequest nell'AuthService per comodità, 
 // ma se le hai definite altrove, adatta l'import qui.
 // Esempio: import { TokenResponse, LoginRequest } from '../service/auth.service'; 
@@ -25,7 +26,8 @@ interface TokenResponse {
     standalone: true,
     imports: [
         CommonModule,
-        FormsModule
+        FormsModule,
+        RouterLink
     ],
     // Risolve NG2008: Template Inline
     templateUrl: './login.html',

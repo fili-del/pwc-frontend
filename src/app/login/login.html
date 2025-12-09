@@ -1,15 +1,29 @@
 <div class="login-container">
     <h2>Accesso Utente</h2>
 
-    <form (submit)="submitLogin()">
+    <form (ngSubmit)="submitLogin()" #loginForm="ngForm">
         <div>
             <label for="email">Email</label>
-            <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="mail@esempio.com">
+            <input 
+                id="email" 
+                type="email" 
+                [(ngModel)]="email" 
+                name="email" 
+                required 
+                placeholder="mail@esempio.com"
+            >
         </div>
 
         <div>
             <label for="password">Password</label>
-            <input id="password" type="password" [(ngModel)]="password" name="password" required placeholder="********">
+            <input 
+                id="password" 
+                type="password" 
+                [(ngModel)]="password" 
+                name="password" 
+                required 
+                placeholder="********"
+            >
         </div>
 
         <p *ngIf="error" class="error-message">{{ error }}</p>
@@ -18,4 +32,11 @@
             {{ isLoading ? 'Accesso in corso...' : 'Login' }}
         </button>
     </form>
+
+    <div class="registration-prompt">
+        <p>Non hai un account?</p>
+        <button class="register-button" [routerLink]="['/register']">
+            Registrati Ora
+        </button>
+        </div>
 </div>
