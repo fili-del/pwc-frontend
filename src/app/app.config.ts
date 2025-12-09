@@ -1,19 +1,25 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { routes } from './app.routes'; // Assicurati che questo puntamento sia corretto
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; // ⬅️ Importa i providers
+import { routes } from './app.routes';
+// 1. Aggiungi HTTP_INTERCEPTORS agli import
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { AuthInterceptor } from './auth.interceptor'; 
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), // Router principale
+    provideRouter(routes),
 
-    // ⬇️ Abilita il client HTTP e abilita la ricerca degli Interceptor dal DI
     provideHttpClient(
-      withInterceptorsFromDi()
-    )
+      withInterceptorsFromDi() // Dice ad Angular di cercare gli interceptor registrati sotto
+    ),
 
-    // Nota: L'Interceptor HTTP_INTERCEPTORS viene fornito tramite app.module.ts
-    // Se il tuo progetto fosse completamente Standalone, lo registreresti qui.
+    // 3. REGISTRA L'INTERCEPTOR QUI (Non in app.module.ts)
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor, // <--- Metti qui il nome della tua classe
+      multi: true
+    }
 
   ]
 };
