@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// Crea un token per bypassare l'interceptor
+export const BYPASS_AUTH = new HttpContextToken<boolean>(() => false);
+
 export interface RegisterRequest {
-    email: string;
-    password: string;
-    username: string;
+  email: string;
+  password: string;
+  username: string;
 }
 
-
-type RegisterResponse = void;
-
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class RegisterService {
-    private apiUrl = 'http://localhost:8080/register';
+  private apiUrl = 'http://localhost:8080';
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-    register(request: RegisterRequest): Observable<RegisterResponse> {
-        return this.http.post<RegisterResponse>(this.apiUrl, request);
-    }
+  register(data: RegisterRequest): Observable<any> {
+    // ⬅️ Bypassa l'interceptor per questa richiesta
+    return this.http.post(`${this.apiUrl}/register`, data, {
+      context: new HttpContext().set(BYPASS_AUTH, true)
+    });
+  }
 }
