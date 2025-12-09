@@ -15,6 +15,7 @@ interface ProjectResponse {
   id: string;
   title: string;
   description: string;
+  collaborators: string[];
   // ... altri campi della risposta
 }
 
@@ -24,6 +25,10 @@ export class ProjectService {
   private readonly PROJECT_URL = `${this.BASE_URL}/project`; 
 
   constructor(private http: HttpClient) {}
+
+  getMyProjects(): Observable<ProjectResponse[]> {
+    return this.http.get<ProjectResponse[]>(`${this.PROJECT_URL}/view`);
+  }
 
   /**
    * Chiama l'endpoint POST /project/create per creare un nuovo progetto.

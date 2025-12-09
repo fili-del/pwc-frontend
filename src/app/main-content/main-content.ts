@@ -1,9 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { UiEventsService } from '../ui-events.service';
 import { PopupComponent } from '../popup/popup';
+import { ProjectService } from '../service/project.service';
 
 type Task = {
   id: number;
@@ -15,6 +16,13 @@ type Task = {
   dueDate: string | null;
 };
 
+type Project = {
+  id: string;
+  title: string;
+  color?: string;
+  collaborators: string[];
+};
+
 @Component({
   selector: 'app-main-content',
   standalone: true,
@@ -22,11 +30,11 @@ type Task = {
   templateUrl: './main-content.html',
   styleUrls: ['./main-content.css'],
 })
-export class MainContent implements OnDestroy {
+export class MainContent implements OnInit, OnDestroy {
   title = 'PROGETTI';
-  projects: { title: string; color: string }[] = [
-    { title: 'Progetto 1', color: '#2c2c2c' },
-  ];
+  projects: { title: string; color: string }[] = [];
+  isLoadingProjects = false;
+  projectsError: string | null = null;
 
   showCreateModal = false;
   newProjectTitle = '';
@@ -61,7 +69,6 @@ export class MainContent implements OnDestroy {
   showTaskDetailsPopup = false;
   selectedTask: Task | null = null;
 
-
   // Properties for modals
   showExitConfirmModal = false;
   showFilterModal = false;
@@ -76,7 +83,10 @@ export class MainContent implements OnDestroy {
     'Sesto', 'Settimo', 'Ottavo', 'Nono', 'Decimo'
   ];
 
-  constructor(private uiEvents: UiEventsService) {
+  constructor(
+    private uiEvents: UiEventsService,
+    private projectService: ProjectService
+  ) {
     this.initializeBoard();
 
     this.subscriptions.add(
@@ -93,6 +103,36 @@ export class MainContent implements OnDestroy {
           this.openExitConfirm();
         }
       }),
+    );
+  }
+
+  ngOnInit(): void {
+    this.loadMyProjects();
+  }
+
+  loadMyProjects(): void {
+    this.isLoadingProjects = true;
+    this.projectsError = null;
+
+    this.subscriptions.add(
+      this.projectService.getMyProjects().subscribe({
+        next: (projects: Project[]) => {
+          console.log('Progetti caricati:', projects);
+          
+          // Mappa i progetti dal backend al formato locale
+          this.projects = projects.map(p => ({
+            title: p.title,
+            color: p.color || '#2c2c2c' // Colore di default se non presente
+          }));
+          
+          this.isLoadingProjects = false;
+        },
+        error: (error) => {
+          console.error('Errore nel caricamento dei progetti:', error);
+          this.projectsError = 'Impossibile caricare i progetti. Riprova.';
+          this.isLoadingProjects = false;
+        }
+      })
     );
   }
 
@@ -184,7 +224,6 @@ export class MainContent implements OnDestroy {
     this.shareUsername = '';
   }
 
-  // ===== Gestione popup Task =====
   get phaseColumns(): { title: string }[] {
     return this.boardColumns.filter(col => col.title);
   }
@@ -226,7 +265,6 @@ export class MainContent implements OnDestroy {
       tasks: [],
     };
 
-    // Inserisce la nuova fase prima dell'ultima colonna
     this.boardColumns.splice(phaseIndex, 0, newPhase);
   }
 
@@ -263,7 +301,6 @@ export class MainContent implements OnDestroy {
     this.closeTaskModal();
   }
 
-  // Popup conferma uscita
   openExitConfirm(): void {
     this.showExitConfirmModal = true;
   }
@@ -277,7 +314,6 @@ export class MainContent implements OnDestroy {
     this.closeProject();
   }
 
-  // Popup filtri
   openFilterModal(): void {
     this.showFilterModal = true;
   }
