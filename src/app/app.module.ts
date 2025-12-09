@@ -9,20 +9,16 @@ import { FormsModule } from '@angular/forms'; // ⬅️ Soluzione definitiva per
 // import { AppComponent } from './app.component';
 
 import { AuthInterceptor } from './service/auth.interceptor';
-import { LoginComponent } from './login/login.component'; // Ho aggiunto l'importazione di LoginComponent
-// ... import degli altri tuoi moduli e componenti (se li hai)
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
-    declarations: [
-        // 🛑 HO RIMOSSO AppComponent QUI
-        // AppComponent,
-        LoginComponent, // ⬅️ Usiamo LoginComponent come componente dichiarato
-        // ... tutti i tuoi componenti (HeaderComponent, ecc.)
-    ],
+    declarations: [],
     imports: [
         BrowserModule,
         HttpClientModule, // Modulo per le chiamate HTTP
-        FormsModule,      // ⬅️ RISOLVE DEFINITIVAMENTE NG8002
+        FormsModule, 
+        LoginComponent
+             // ⬅️ RISOLVE DEFINITIVAMENTE NG8002
         // ...
     ],
     providers: [
