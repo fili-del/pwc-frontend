@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+// 🛑 CORREZIONE: RouterLink va nell'array imports dello standalone component
+import { Router, RouterLink } from '@angular/router'; 
 import { HttpErrorResponse } from '@angular/common/http';
-import { RegisterService, RegisterRequest } from '../service/register.service';
-import { RouterLink } from '@angular/router';
-// Assumiamo che RegisterRequest sia definita e importata da RegisterService
+// Assumiamo che RegisterRequest includa { email, password, username }
+import { RegisterService, RegisterRequest } from '../service/register.service'; 
 
 // ...
 @Component({
@@ -13,23 +13,22 @@ import { RouterLink } from '@angular/router';
     standalone: true,
     imports: [
         CommonModule,
-        FormsModule
+        FormsModule,
+        RouterLink // ⬅️ Aggiunto qui per l'uso nel template
     ],
-    // CORREGGI QUI: da .hmtl a .html
     templateUrl: './register.component.html',
     styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-    // ...
-
-    // Corrispondono ai campi che ti aspetti nel tuo RegisterRequest Java
+    // Proprietà del form
     email: string = '';
     password: string = '';
-    // Aggiungi qui eventuali altri campi, come 'username' o 'confirmPassword'
-    // confirmPassword: string = ''; 
+    confirmPassword: string = ''; 
+    username: string = ''; // ⬅️ NUOVO: Aggiunta la proprietà username
 
+    // Proprietà di stato
     error: string | null = null;
-    message: string | null = null; // Messaggio di successo
+    message: string | null = null;
     isLoading: boolean = false;
 
     constructor(
@@ -38,36 +37,40 @@ export class RegisterComponent {
     ) { }
 
     goToLogin() {
-    this.router.navigate(['/login']); // Naviga al percorso definito
-  }
+        this.router.navigate(['/login']);
+    }
+
     submitRegistration(): void {
         this.error = null;
         this.message = null;
+        
+        console.log('Dati di registrazione inviati:', { email: this.email, username: this.username, password: this.password });
 
-        if (!this.email || !this.password) {
-            this.error = 'Per favore, inserisci tutti i campi richiesti.';
+        // 📝 Validazione
+        if (!this.email || !this.password || !this.username) {
+            this.error = 'Per favore, inserisci tutti i campi richiesti (Email, Username, Password).';
             return;
         }
-        // Se usi la conferma password, aggiungi la verifica qui
-        /*
+
         if (this.password !== this.confirmPassword) {
             this.error = 'Le password non corrispondono.';
             return;
         }
-        */
 
         this.isLoading = true;
 
+        // 🚀 Creazione del body della richiesta
         const registrationData: RegisterRequest = {
             email: this.email,
-            password: this.password
-            // Aggiungi qui eventuali altri campi
+            password: this.password,
+            username: this.username 
         };
 
         this.registerService.register(registrationData).subscribe({
             next: (response) => {
                 console.log('Registrazione Riuscita:', response);
                 this.message = 'Registrazione avvenuta con successo! Reindirizzamento al login...';
+                
                 // Reindirizza alla pagina di login dopo un breve ritardo
                 setTimeout(() => {
                     this.router.navigate(['/login']);
@@ -77,13 +80,22 @@ export class RegisterComponent {
                 this.isLoading = false;
                 console.error('Errore di Registrazione:', err);
 
-                if (err.status === 409) { // 409 Conflict è comune per "utente già esistente"
-                    this.error = 'Questo utente (email) è già registrato.';
+                let customErrorMessage = 'Si è verificato un errore inaspettato.';
+
+                if (err.status === 409) {
+                    customErrorMessage = 'Questa email o username è già registrato nel sistema.';
+                } else if (err.status === 401) {
+                    // ⚠️ Questo errore è critico (problema @PermitAll), come discusso in precedenza.
+                    customErrorMessage = 'Accesso non autorizzato. Verifica la configurazione di sicurezza del backend (@PermitAll).';
                 } else if (err.status === 0) {
-                    this.error = 'Impossibile connettersi al server (Controlla Quarkus e CORS).';
+                    customErrorMessage = 'Impossibile connettersi al server. (Server Quarkus spento o errore CORS).';
+                } else if (err.error && typeof err.error === 'object') {
+                    customErrorMessage = err.error.message || err.error.detail || err.statusText;
                 } else {
-                    this.error = `Errore: ${err.error.message || err.statusText}`;
+                    customErrorMessage = err.statusText || customErrorMessage;
                 }
+
+                this.error = customErrorMessage;
             },
             complete: () => {
                 this.isLoading = false;

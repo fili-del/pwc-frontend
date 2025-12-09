@@ -1,45 +1,24 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const publicUrls = ['/auth/login', '/register']; // URL DA IGNORARE
 
-  constructor() {}
+  // Controlla se l'URL della richiesta corrisponde a un URL pubblico
+  const isPublicUrl = publicUrls.some(url => req.url.includes(url));
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    
-    // 1. Recupera il token (qui uso localStorage per semplicità, ma potresti usare un AuthService)
-    const myToken = localStorage.getItem('access_token');
-
-    // 2. Se il token esiste, clona la richiesta e aggiungi l'header
-    // IMPORTANTE: Le richieste sono immutabili, devi clonarle per modificarle
-    if (myToken) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${myToken}`
+  return next(req).pipe(
+    tap({
+      error: (err) => {
+        // Se non è un URL pubblico e l'errore è 401, reindirizza
+        if (err.status === 401 && !isPublicUrl) {
+          console.warn('Non autorizzato! Reindirizzamento al login...');
+          router.navigate(['/login']);
         }
-      });
-    }
-
-    // 3. Passa la richiesta al prossimo handler e gestisci eventuali errori
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        
-        if (error.status === 401) {
-          // Esempio: Se ricevi un 401 Unauthorized, potresti fare il logout o redirect al login
-          console.error('Non autorizzato! Reindirizzamento al login...');
-        }
-        
-        return throwError(() => error);
-      })
-    );
-  }
-}
+      }
+    })
+  );
+};
