@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
-import { LoginComponent } from './login/login.component';
+// Rimuovi: import { LoginComponent } from './login/login.component';
+import { RouterOutlet } from '@angular/router'; // <-- NUOVO IMPORT
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [LoginComponent],
-  templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+        // Rimuovi LoginComponent da qui!
+        RouterOutlet // <-- AGGIUNGI RouterOutlet
+    ],
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
 })
 export class App { }

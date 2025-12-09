@@ -4,8 +4,8 @@ import { routes } from './app.routes';
 // 1. Aggiungi HTTP_INTERCEPTORS agli import
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { AuthInterceptor } from './auth.interceptor'; 
-
+import { authInterceptor } from './auth.interceptor'; 
+import { AuthInterceptor } from './service/auth.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -22,4 +22,4 @@ export const appConfig: ApplicationConfig = {
     }
 
   ]
-};
+};  

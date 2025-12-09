@@ -1,0 +1,153 @@
+/* -------------------------------------- */
+/* 1. LAYOUT E SFONDO PRINCIPALE */
+/* -------------------------------------- */
+.registration-container {
+    /* Sfondo scuro del mockup */
+    background-color: #333333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: sans-serif;
+    color: #ffffff;
+}
+
+/* -------------------------------------- */
+/* 2. ELEMENTI DI HEADER (TITOLO) */
+/* -------------------------------------- */
+
+.registration-title {
+    font-size: 2em;
+    font-weight: 500;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* -------------------------------------- */
+/* 3. MODULO E CAMPI DI INPUT */
+/* -------------------------------------- */
+
+form {
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Gruppo form per label/input */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* Etichetta */
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #cccccc;
+}
+
+/* Campo di Input */
+.form-group input {
+    width: 100%;
+    height: 45px;
+    background-color: #555555;
+    border: none;
+    border-radius: 5px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    color: #ffffff;
+    font-size: 1em;
+}
+
+.form-group input:focus {
+    outline: 2px solid #d11a2a; /* Bordo colorato al focus */
+}
+
+/* -------------------------------------- */
+/* 4. AZIONI E MESSAGGI DI FEEDBACK */
+/* -------------------------------------- */
+
+/* Messaggio di errore */
+.alert-danger {
+    color: #ff6666;
+    background-color: #4b1a1a;
+    border: 1px solid #d11a2a;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Messaggio di successo */
+.alert-success {
+    color: #72ff72;
+    background-color: #1a4b1a;
+    border: 1px solid #1ad12a;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    width: 100%;
+    max-width: 350px;
+}
+
+/* Stile del pulsante "Registrati" */
+button[type="submit"] {
+    width: 180px;
+    height: 45px;
+    background-color: #d11a2a;
+    color: #ffffff;
+    border: none;
+    border-radius: 22px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 30px auto 0 auto;
+}
+
+button[type="submit"]:hover:not([disabled]) {
+    background-color: #a51320;
+}
+
+/* Stile per il Bottone Disabilitato (Loading) */
+button[type="submit"][disabled] {
+    background-color: #ff99a0;
+    cursor: not-allowed;
+}
+
+/* -------------------------------------- */
+/* 5. LINK DI RITORNO AL LOGIN (COME PULSANTE) */
+/* -------------------------------------- */
+
+.login-link {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #cccccc;
+}
+
+/* Stile specifico per il pulsante che funge da link */
+.link-button {
+    background: none;
+    border: none;
+    color: #d11a2a; /* Usa il colore principale per il link */
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1em; /* Deve essere più grande di 0.9em */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.link-button:hover {
+    color: #ff6666;
+}
