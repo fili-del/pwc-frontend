@@ -9,6 +9,7 @@ import { AuthService } from '../service/auth.service';
 // Esempio: import { TokenResponse, LoginRequest } from '../service/auth.service'; 
 
 // Definiamo le interfacce qui per sicurezza se non le importi dall'AuthService
+
 interface LoginRequest {
     email: string;
     password: string;
@@ -28,7 +29,7 @@ interface TokenResponse {
     ],
     // Risolve NG2008: Template Inline
     templateUrl: './login.html',
-    styleUrls: []
+    styleUrls: ['./login.css']
 })
 export class LoginComponent {
     email: string = '';
