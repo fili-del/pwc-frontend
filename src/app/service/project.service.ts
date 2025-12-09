@@ -21,10 +21,10 @@ interface ProjectResponse {
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  private readonly BASE_URL = 'http://localhost:8080'; 
-  private readonly PROJECT_URL = `${this.BASE_URL}/project`; 
+  private readonly BASE_URL = 'http://localhost:8080';
+  private readonly PROJECT_URL = `${this.BASE_URL}/project`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getMyProjects(): Observable<ProjectResponse[]> {
     return this.http.get<ProjectResponse[]>(`${this.PROJECT_URL}/view`);
@@ -48,14 +48,14 @@ export class ProjectService {
    */
   deleteProject(projectId: string): Observable<any> {
     const url = `${this.PROJECT_URL}/delete`;
-    
+
     // NOTA: Il tuo endpoint DELETE Java accetta un Body (ProjectRequest con l'ID).
     // Questo è un approccio comune nelle API JAX-RS (Quarkus/Jersey) ma non standard HTTP.
     // Dobbiamo inviare l'ID nel body della richiesta DELETE.
     const deleteRequest: ProjectRequest = {
-        id: projectId,
-        title: '', // Campi placeholder, solo l'ID è richiesto dal delete
-        description: ''
+      id: projectId,
+      title: '', // Campi placeholder, solo l'ID è richiesto dal delete
+      description: ''
     };
 
     // Usiamo il metodo http.request di Angular per inviare un body con DELETE

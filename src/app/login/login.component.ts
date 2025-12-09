@@ -1,15 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../service/auth.service';
-import { RouterLink } from '@angular/router';
-// Ho spostato TokenResponse e LoginRequest nell'AuthService per comodità, 
-// ma se le hai definite altrove, adatta l'import qui.
-// Esempio: import { TokenResponse, LoginRequest } from '../service/auth.service'; 
-
-// Definiamo le interfacce qui per sicurezza se non le importi dall'AuthService
 
 interface LoginRequest {
     email: string;
@@ -29,7 +23,6 @@ interface TokenResponse {
         FormsModule,
         RouterLink
     ],
-    // Risolve NG2008: Template Inline
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css']
 })
@@ -62,12 +55,37 @@ export class LoginComponent {
 
         this.authService.login(credentials).subscribe({
             next: (response: TokenResponse) => {
-                console.log('Login riuscito. Reindirizzamento.');
-                this.router.navigate(['/main-content']);
+                console.log('═══════════════════════════════════');
+                console.log('✅ Login riuscito!');
+                console.log('🔑 Token ricevuto (primi 30 caratteri):', response.accessToken.substring(0, 30) + '...');
+                
+                // Salva entrambi i token
+                localStorage.setItem('token', response.accessToken);
+                localStorage.setItem('refreshToken', response.refreshToken);
+                
+                console.log('💾 Token salvato in localStorage');
+                
+                // Verifica immediata
+                const savedToken = localStorage.getItem('token');
+                if (savedToken) {
+                    console.log('✅ VERIFICA: Token presente in localStorage');
+                    console.log('🔑 Token salvato (primi 30 caratteri):', savedToken.substring(0, 30) + '...');
+                } else {
+                    console.error('❌ ERRORE: Token NON trovato in localStorage!');
+                }
+                
+                console.log('═══════════════════════════════════');
+                
+                // Usa setTimeout per assicurarsi che il token sia salvato prima del redirect
+                setTimeout(() => {
+                    console.log('🔍 Verifica finale prima del redirect:', localStorage.getItem('token') ? 'TOKEN PRESENTE ✅' : 'TOKEN ASSENTE ❌');
+                    console.log('🚀 Reindirizzamento a /main-content...');
+                    this.router.navigate(['/main-content']);
+                }, 50);
             },
             error: (err: HttpErrorResponse) => {
                 this.isLoading = false;
-                console.error('Errore di Login:', err);
+                console.error('❌ Errore di Login:', err);
 
                 if (err.status === 401) {
                     this.error = 'Credenziali non valide.';
