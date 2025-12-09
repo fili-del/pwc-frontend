@@ -6,7 +6,7 @@ import { UiEventsService } from '../ui-events.service';
   standalone: true,
   imports: [], // Puoi aggiungere qui altri componenti/moduli se necessario
   templateUrl: './header.html',
-  styleUrl: './header.css',
+  styleUrls: ['./header.css'],
 })
 export class Header {
   constructor(private uiEvents: UiEventsService) {}

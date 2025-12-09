@@ -27,43 +27,7 @@ interface TokenResponse {
         FormsModule
     ],
     // Risolve NG2008: Template Inline
-    template: `
-    <div class="login-container">
-        <h2>Accesso Utente</h2>
-        
-        <form (submit)="submitLogin()">
-            <div>
-                <label for="email">Email</label>
-                <input 
-                    id="email" 
-                    type="email" 
-                    [(ngModel)]="email" 
-                    name="email" 
-                    required 
-                    placeholder="mail@esempio.com"
-                >
-            </div>
-            
-            <div>
-                <label for="password">Password</label>
-                <input 
-                    id="password" 
-                    type="password" 
-                    [(ngModel)]="password" 
-                    name="password" 
-                    required 
-                    placeholder="********"
-                >
-            </div>
-            
-            <p *ngIf="error" class="error-message">{{ error }}</p>
-
-            <button type="submit" [disabled]="isLoading">
-                {{ isLoading ? 'Accesso in corso...' : 'Login' }}
-            </button>
-        </form>
-    </div>
-  `,
+    templateUrl: './login.html',
     styleUrls: []
 })
 export class LoginComponent {

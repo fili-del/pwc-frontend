@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [], // Puoi aggiungere qui altri componenti/moduli se necessario
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.css',
+  styleUrls: ['./sidebar.css'],
 })
 export class Sidebar {
 

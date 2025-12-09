@@ -1,17 +1,11 @@
 import { Component } from '@angular/core';
-import { Header } from './header/header';
-import { Sidebar } from './sidebar/sidebar';
-import { MainContent } from './main-content/main-content';
+import { LoginComponent } from './login/login.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    Header,
-    Sidebar,
-    MainContent
-  ],
+  imports: [LoginComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App { }
